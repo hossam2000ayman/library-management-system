@@ -25,7 +25,7 @@ public class ContactInformation {
 
     @Min(value = 0, message = "Age must be a positive number")
     @Column(name = "age")
-    private int age;
+    private Integer age;
 
     @NonNull
 //    @Pattern(regexp = "\\\\+\\\\d{1,3}\\\\s\\\\d{3,}", message = "Invalid phone number format")
@@ -35,7 +35,7 @@ public class ContactInformation {
     @NonNull
     @Min(value = 1, message = "Country code must be a positive number")
     @Column(name = "country_code", nullable = false)
-    private int countryCode;
+    private Integer countryCode;
 
     @NonNull
     @NotBlank(message = "Nationality must not be blank")

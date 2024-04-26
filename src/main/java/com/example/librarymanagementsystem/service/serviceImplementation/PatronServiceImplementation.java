@@ -5,7 +5,6 @@ import com.example.librarymanagementsystem.exception.PatronNotFoundException;
 import com.example.librarymanagementsystem.repository.PatronRepository;
 import com.example.librarymanagementsystem.service.PatronService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,7 +17,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PatronServiceImplementation implements PatronService {
     private final PatronRepository patronRepository;
-    private final ModelMapper modelMapper;
 
     /*helper method*/
     private Patron findPatronById(Long id) {
@@ -51,7 +49,15 @@ public class PatronServiceImplementation implements PatronService {
     public Patron updatePatron(Long id, Patron newPatron) {
         Patron patron = findPatronById(id);
         newPatron.setId(id);
-        modelMapper.map(newPatron, patron);
+        if (!newPatron.getName().isEmpty())
+            patron.setName(newPatron.getName());
+        if (!newPatron.getContactInformation().getPhoneNumber().isEmpty()
+                && newPatron.getContactInformation().getAge() != null
+                && !newPatron.getContactInformation().getAddress().isEmpty()
+                && !newPatron.getContactInformation().getLanguage().isEmpty()
+                && !newPatron.getContactInformation().getNationality().isEmpty()
+                && newPatron.getContactInformation().getPatron().getId() != null)
+            patron.setContactInformation(newPatron.getContactInformation());
         patronRepository.saveAndFlush(patron);
         return patron;
     }

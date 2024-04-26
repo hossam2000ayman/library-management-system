@@ -34,7 +34,7 @@ public class Book {
     private String author;
 
     @Column(name = "publication_year")
-    private int publication_year;
+    private Integer publication_year;
 
     @NonNull
     @NotBlank(message = "isbn must not be blank")

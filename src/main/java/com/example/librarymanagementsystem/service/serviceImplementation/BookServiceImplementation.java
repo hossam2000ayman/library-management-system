@@ -4,16 +4,11 @@ import com.example.librarymanagementsystem.entity.Book;
 import com.example.librarymanagementsystem.exception.BookNotFoundException;
 import com.example.librarymanagementsystem.repository.BookRepository;
 import com.example.librarymanagementsystem.service.BookService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +17,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BookServiceImplementation implements BookService {
     private final BookRepository bookRepository;
-
-    private final ModelMapper modelMapper;
 
     /*helper method*/
     private Book findBookById(Long id) {
@@ -48,11 +41,18 @@ public class BookServiceImplementation implements BookService {
 
 
     @Override
-    @CachePut(value = "books" , key = "#id")
+    @CachePut(value = "books", key = "#id")
     public Book updateBook(Long id, Book newBook) {
         Book currentBook = findBookById(id);
         newBook.setId(id);
-        modelMapper.map(newBook, currentBook);
+        if (!newBook.getTitle().isEmpty())
+            currentBook.setTitle(newBook.getTitle());
+        if (!newBook.getIsbn().isEmpty())
+            currentBook.setIsbn(newBook.getIsbn());
+        if (!newBook.getAuthor().isEmpty())
+            currentBook.setAuthor(newBook.getAuthor());
+        if (newBook.getPublication_year() != null)
+            currentBook.setPublication_year(newBook.getPublication_year());
         bookRepository.saveAndFlush(currentBook);
         return currentBook;
     }
